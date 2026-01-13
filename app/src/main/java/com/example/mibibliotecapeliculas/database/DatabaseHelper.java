@@ -1,6 +1,10 @@
 package com.example.mibibliotecapeliculas.database;
 
 
+//Uso SQLite con SQLiteOpenHelper.
+//He creado varias tablas relacionadas y cada película se guarda asociada a un usuario,
+// de forma que cada uno solo ve sus propios datos
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -234,4 +238,36 @@ public class DatabaseHelper  extends SQLiteOpenHelper {
                 new String[]{String.valueOf(idPelicula)});
         db.close();
     }
+
+    // SELECT: Película por ID
+    public Pelicula getPeliculaById(int idPelicula) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        Pelicula pelicula = null;
+
+        Cursor c = db.rawQuery(
+                "SELECT p.id, p.titulo, p.anio, g.nombre, p.valoracion, p.descripcion, p.portada " +
+                        "FROM peliculas p " +
+                        "LEFT JOIN generos g ON p.id_genero = g.id " +
+                        "WHERE p.id = ?",
+                new String[]{String.valueOf(idPelicula)}
+        );
+
+        if (c.moveToFirst()) {
+            pelicula = new Pelicula(
+                    c.getInt(0),
+                    c.getString(1),
+                    c.getInt(2),
+                    c.getString(3),
+                    c.getFloat(4),
+                    c.getInt(6)
+            );
+            pelicula.setDescripcion(c.getString(5));
+        }
+
+        c.close();
+        db.close();
+        return pelicula;
+    }
+
 }
