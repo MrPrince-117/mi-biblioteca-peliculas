@@ -1,6 +1,11 @@
 package com.example.mibibliotecapeliculas.activities;
 
-
+/**
+ * Actividad de inicio de sesión.
+ *
+ * Permite a los usuarios autenticarse con su nombre de usuario y contraseña.
+ * También proporciona acceso a la pantalla de registro.
+ */
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -1,5 +1,11 @@
 package com.example.mibibliotecapeliculas.activities;
 
+/**
+ * Actividad de registro de nuevos usuarios.
+ *
+ * Permite crear una cuenta nueva con nombre de usuario y contraseña.
+ */
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,6 +29,10 @@ public class RegisterActivity extends AppCompatActivity {
         etNuevoUsuario = findViewById(R.id.etNuevoUsuario);
         etNuevaPassword = findViewById(R.id.etNuevaPassword);
         btnRegistrar = findViewById(R.id.btnRegistrar);
+
+        // Botón de retroceso
+        android.widget.ImageView btBack = findViewById(R.id.btBack);
+        btBack.setOnClickListener(v -> finish());
 
         db = new DatabaseHelper(this);
 

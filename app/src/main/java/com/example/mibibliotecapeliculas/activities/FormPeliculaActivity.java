@@ -1,5 +1,12 @@
 package com.example.mibibliotecapeliculas.activities;
 
+/**
+ * Actividad para añadir o editar películas.
+ *
+ * Permite ingresar los datos de una película (título, año, género, valoración, descripción)
+ * y seleccionar una portada. Funciona tanto para crear nuevas películas como para editar existentes.
+ */
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
@@ -11,8 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mibibliotecapeliculas.database.DatabaseHelper;
 import com.example.mibibliotecapeliculas.R;
+import com.example.mibibliotecapeliculas.models.Pelicula;
 
 import java.util.List;
+
+
 public class FormPeliculaActivity extends AppCompatActivity {
 
 
@@ -39,6 +49,10 @@ public class FormPeliculaActivity extends AppCompatActivity {
         spinnerGenero = findViewById(R.id.spinnerGeneroForm);
         btnGuardar = findViewById(R.id.btnGuardar);
         btnSeleccionarPortada = findViewById(R.id.btnSeleccionarPortada);
+
+        // Botón de retroceso
+        android.widget.ImageView btBack = findViewById(R.id.btBack);
+        btBack.setOnClickListener(v -> finish());
 
         db = new DatabaseHelper(this);
 
@@ -90,8 +104,8 @@ public class FormPeliculaActivity extends AppCompatActivity {
 
         int anio = Integer.parseInt(anioStr);
         float valoracion = Float.parseFloat(valoracionStr);
-        int idGenero = spinnerGenero.getSelectedItemPosition() + 1;
-        // (+1 porque los ids empiezan en 1)
+        String generoSeleccionado = spinnerGenero.getSelectedItem().toString();
+        int idGenero = db.getGeneroId(generoSeleccionado);
 
         if (idPelicula == -1) {
             // INSERT
@@ -123,8 +137,27 @@ public class FormPeliculaActivity extends AppCompatActivity {
     }
 
     private void cargarDatosPelicula() {
-        // (Opcional para ahora, se puede hacer después)
-        // Aquí cargarías los datos si editas
+        Pelicula pelicula = db.getPeliculaById(idPelicula);
+
+        if (pelicula == null) {
+            return;
+        }
+
+        etTitulo.setText(pelicula.getTitulo());
+        etAnio.setText(String.valueOf(pelicula.getAnio()));
+        etValoracion.setText(String.valueOf(pelicula.getValoracion()));
+        etDescripcion.setText(pelicula.getDescripcion());
+
+        portadaSeleccionada = pelicula.getPortada();
+
+        // Seleccionar el género correcto en el spinner por nombre
+        String generoPelicula = pelicula.getGenero();
+        for (int i = 0; i < spinnerGenero.getCount(); i++) {
+            if (spinnerGenero.getItemAtPosition(i).equals(generoPelicula)) {
+                spinnerGenero.setSelection(i);
+                break;
+            }
+        }
     }
 
     @Override

@@ -1,5 +1,11 @@
 package com.example.mibibliotecapeliculas.models;
 
+/**
+ * Clase modelo que representa  película.
+ *
+ * Contiene toda la información de una película: título, año, género, valoración,
+ * descripción y portada.
+ */
 public class Pelicula {
 
     private int id;

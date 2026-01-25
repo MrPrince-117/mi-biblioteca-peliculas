@@ -1,5 +1,12 @@
 package com.example.mibibliotecapeliculas;
 
+/**
+ * Actividad principal de la aplicación.
+ *
+ * Muestra la lista de películas del usuario con opciones de filtrado y ordenación.
+ * Permite navegar a otras pantallas para añadir películas, gestionar géneros y ver estadísticas.
+ */
+
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -17,30 +24,27 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mibibliotecapeliculas.activities.DetalleActivity;
+import com.example.mibibliotecapeliculas.activities.FormPeliculaActivity;
+import com.example.mibibliotecapeliculas.activities.GenerosActivity;
+import com.example.mibibliotecapeliculas.activities.StatsActivity;
 import com.example.mibibliotecapeliculas.adapters.PeliculaAdapter;
 import com.example.mibibliotecapeliculas.database.DatabaseHelper;
 import com.example.mibibliotecapeliculas.R;
 import com.example.mibibliotecapeliculas.models.Pelicula;
+import android.widget.AdapterView;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        EdgeToEdge.enable(this);
-//        setContentView(R.layout.activity_main);
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//        });
-//    }
-
     ListView listViewPeliculas;
     Button btnNuevaPelicula;
+    Button btnGestionGeneros;
+    Button btnStats;
+
     Spinner spinnerGenero, spinnerOrden;
 
     DatabaseHelper db;
@@ -50,34 +54,35 @@ public class MainActivity extends AppCompatActivity {
     int idUsuario;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Referencias UI
+        //  Referencias UI
         listViewPeliculas = findViewById(R.id.listViewPeliculas);
         btnNuevaPelicula = findViewById(R.id.btnNuevaPelicula);
+        btnGestionGeneros = findViewById(R.id.btnGestionGeneros);
+        btnStats = findViewById(R.id.btnStats);
         spinnerGenero = findViewById(R.id.spinnerGenero);
         spinnerOrden = findViewById(R.id.spinnerOrden);
 
         // Base de datos
         db = new DatabaseHelper(this);
 
-        // Recibir usuario logueado
+        //  Usuario logueado
         idUsuario = getIntent().getIntExtra("id_usuario", -1);
 
-        // Cargar spinners
+        //  Spinners
         cargarSpinners();
 
-        // Cargar lista de películas
+        //  ListView
         listaPeliculas = new ArrayList<>();
         adapter = new PeliculaAdapter(this, listaPeliculas);
         listViewPeliculas.setAdapter(adapter);
 
-        cargarPeliculas();
-
-        // Click en película → detalle
+        //  Listeners
         listViewPeliculas.setOnItemClickListener((parent, view, position, id) -> {
             Pelicula pelicula = adapter.getItem(position);
             Intent intent = new Intent(MainActivity.this, DetalleActivity.class);
@@ -85,12 +90,43 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Botón añadir película
         btnNuevaPelicula.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, FormPeliculaActivity.class);
             intent.putExtra("id_usuario", idUsuario);
             startActivity(intent);
         });
+
+        btnGestionGeneros.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, GenerosActivity.class));
+        });
+        btnStats.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, StatsActivity.class);
+            intent.putExtra("id_usuario", idUsuario);
+            startActivity(intent);
+        });
+
+        spinnerGenero.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                aplicarFiltros();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        spinnerOrden.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+                aplicarFiltros();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        // Primera carga
+        aplicarFiltros();
     }
 
     @Override
@@ -99,10 +135,9 @@ public class MainActivity extends AppCompatActivity {
         cargarPeliculas();
     }
 
-    // =====================================================
-    // MÉTODOS AUXILIARES
-    // =====================================================
 
+
+    // MÉTODOS AUXILIARES
     private void cargarPeliculas() {
         listaPeliculas.clear();
         listaPeliculas.addAll(db.getPeliculasByUsuario(idUsuario));
@@ -111,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void cargarSpinners() {
 
-        // Spinner de géneros
+        // Spinner géneros
         List<String> generos = db.getAllGeneros();
         generos.add(0, "Todos");
 
@@ -122,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         adapterGeneros.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerGenero.setAdapter(adapterGeneros);
 
-        // Spinner de ordenación
+        // Spinner ordenación
         List<String> orden = new ArrayList<>();
         orden.add("Año");
         orden.add("Valoración");
@@ -134,4 +169,22 @@ public class MainActivity extends AppCompatActivity {
         adapterOrden.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerOrden.setAdapter(adapterOrden);
     }
+
+    // para aplicar filtros
+    private void aplicarFiltros() {
+
+        String generoSeleccionado = spinnerGenero.getSelectedItem().toString();
+        String ordenSeleccionado = spinnerOrden.getSelectedItem().toString();
+
+        listaPeliculas.clear();
+        listaPeliculas.addAll(
+                db.getPeliculasFiltradas(
+                        idUsuario,
+                        generoSeleccionado,
+                        ordenSeleccionado
+                )
+        );
+        adapter.notifyDataSetChanged();
+    }
+
 }

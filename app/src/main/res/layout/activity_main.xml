@@ -28,10 +28,24 @@
         android:layout_marginTop="8dp"/>
 
     <Button
+        android:id="@+id/btnGestionGeneros"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gestión de géneros"/>
+
+    <Button
         android:id="@+id/btnNuevaPelicula"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Añadir película"/>
+
+    <Button
+        android:id="@+id/btnStats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Estadísticas"/>
+
+
 
 
 </LinearLayout>

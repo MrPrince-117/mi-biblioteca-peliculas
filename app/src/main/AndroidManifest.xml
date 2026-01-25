@@ -11,15 +11,47 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MiBibliotecaPeliculas">
+
+        <!-- LOGIN (pantalla inicial) -->
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- REGISTRO -->
+        <activity android:name=".activities.RegisterActivity" />
+
+        <!-- PANTALLA PRINCIPAL -->
+        <activity android:name=".MainActivity" />
+
+        <!-- FORMULARIO PELÍCULA -->
+        <activity android:name=".activities.FormPeliculaActivity" />
+
+        <!-- DETALLE PELÍCULA -->
+        <activity android:name=".activities.DetalleActivity" />
+
+        <!-- GESTIÓN DE GÉNEROS -->
+        <activity android:name=".activities.GenerosActivity" />
+
+        <!-- SELECCIÓN DE PORTADA -->
+        <activity android:name=".activities.SelectPortadaActivity" />
+
+        <!-- ESTADÍSTICAS -->
+        <activity android:name=".activities.StatsActivity" />
+
+<!--        <activity-->
+<!--            android:name=".MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
     </application>
 
 </manifest>

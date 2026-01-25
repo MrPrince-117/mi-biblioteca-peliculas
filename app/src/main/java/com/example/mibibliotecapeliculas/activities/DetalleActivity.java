@@ -1,5 +1,10 @@
 package com.example.mibibliotecapeliculas.activities;
 
+/**
+ * Actividad que muestra los detalles completos de una película.
+ *
+ * Permite ver toda la información de una película y ofrece opciones para editarla o eliminarla.
+ */
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -40,6 +45,10 @@ public class DetalleActivity extends AppCompatActivity {
         tvDescripcion = findViewById(R.id.tvDescripcion);
         btnEditar = findViewById(R.id.btnEditar);
         btnEliminar = findViewById(R.id.btnEliminar);
+
+        // Botón de retroceso
+        ImageView btBack = findViewById(R.id.btBack);
+        btBack.setOnClickListener(v -> finish());
 
         db = new DatabaseHelper(this);
 
